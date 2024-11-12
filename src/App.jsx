@@ -22,7 +22,7 @@ import ListadoServicio from "./GServicios/ListadoServicio";
 
 function App() {
   return (
-    <div className="conteiner">
+    <div className="container">
       <BrowserRouter>
         <Menu />
         <Routes>
@@ -155,15 +155,6 @@ function App() {
             element={
               <ServicioProvider>
                 <Servicio title="Nuevo" />
-              </ServicioProvider>
-            }
-          />
-          <Route
-            exact
-            path="/servicio/:id"
-            element={
-              <ServicioProvider>
-                <Servicio title="Editar" />
               </ServicioProvider>
             }
           />

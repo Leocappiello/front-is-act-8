@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Menu() {
   return (
-    <div className="conteiner">
+    <div className="container">
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
           <a className="navbar-brand estiloTitulo" href="/">

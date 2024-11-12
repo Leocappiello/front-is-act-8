@@ -1,8 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { newServicio, obtenerServicio } from "../Services/ServicioService";
 import { obtenerClientesForCombo } from "../Services/ClienteService";
+import { newServicio, obtenerServicio } from "../Services/ServicioService";
 import { obtenerTiposServiciosForCombo } from "../Services/TipoServicioService";
 
 export default function Servicio({ title }) {
@@ -40,15 +39,6 @@ export default function Servicio({ title }) {
     setTotal(nuevoTotal);
   }, [servicios]);
 
-  const cargarModel2 = async () => {
-    if (id > 0) {
-      const resultado = await obtenerServicio(id);
-      setServicio(resultado);
-      setSelectedCliente(resultado.cliente.id); // Establecer el cliente seleccionado
-      setFecha(new Date(resultado.fechaDocumento).toISOString().split("T")[0]); // Establecer la fecha
-      setServicios(resultado.listaItems); // Establecer los item servicios cargados
-    }
-  };
   const cargarModel = async () => {
     if (id > 0) {
       const resultado = await obtenerServicio(id);
@@ -74,19 +64,6 @@ export default function Servicio({ title }) {
       ...servicios,
       { tipoServicio: "", precio: "", observaciones: "" },
     ]);
-  };
-
-  const handleRemoveServicio = (index) => {
-    const newServicios = [...servicios];
-    newServicios.splice(index, 1);
-    setServicios(newServicios);
-  };
-
-  const handleServicioChangeBoorar = (index, event) => {
-    const { name, value } = event.target;
-    const newServicios = [...servicios];
-    newServicios[index] = { ...newServicios[index], [name]: value };
-    setServicios(newServicios);
   };
 
   const handleServicioChange = (index, event) => {
@@ -180,35 +157,14 @@ export default function Servicio({ title }) {
       <form onSubmit={onSubmit}>
         <div className="mb-3">
           <div>
-            <label htmlFor="listaClientes">Selecciona un cliente: </label>
-            <br />
-            <select
-              id="listaClientes"
-              value={selectedCliente} // Usamos la variable correctamente como string
-              onChange={(e) => setSelectedCliente(e.target.value)}
-            >
-              <option value="">Seleccione...</option>
-              {listaClientes.map((cliente) => (
-                <option key={cliente.id} value={String(cliente.id)}>
-                  {" "}
-                  {/* Convertimos el id a string */}
-                  {cliente.razonSocial}
-                </option>
-              ))}
-            </select>
-
-            {errors.cliente && <div className="error">{errors.cliente}</div>}
-          </div>
-
-          <div>
             <label htmlFor="fecha">Fecha: </label>
             <br />
             <input
-              type="date"
-              id="fecha"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-            />
+                type="date"
+                id="fecha"
+                value={fecha}
+                onClick={null}
+              />
             {errors.fecha && <div className="error">{errors.fecha}</div>}
           </div>
         </div>
@@ -248,11 +204,11 @@ export default function Servicio({ title }) {
             <input
               type="number"
               name="precio"
-              value={servicio.precio}
+              value={servicio.precio.toLocaleString('de-DE')}
               onChange={(e) => handleServicioChange(index, e)}
             />
             {errors.servicios[index]?.precio && (
-              <div className="error">{errors.servicios[index].precio}</div>
+              <div className="error">{errors.servicios[index].precio.toLocaleString('de-DE')}</div>
             )}
 
             <label>Observaciones:</label>
@@ -262,9 +218,6 @@ export default function Servicio({ title }) {
               value={servicio.observaciones}
               onChange={(e) => handleServicioChange(index, e)}
             />
-            <button type="button" onClick={() => handleRemoveServicio(index)}>
-              Eliminar
-            </button>
           </div>
         ))}
 

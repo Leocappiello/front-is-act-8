@@ -47,7 +47,7 @@ export async function newTipoServicio(tipoServicio) {
     if (tipoServicio.id > 0) {
       const { data } = await axios({
         method: "PUT",
-        url: `${API_URL}/tipoServicios/${tipoServicio.id}`,
+        url: `${API_URL}/tiposServicios/${tipoServicio.id}`,
         data: tipoServicio,
       });
     } else {
@@ -60,16 +60,13 @@ export async function newTipoServicio(tipoServicio) {
 
     return data;
   } catch (e) {
-    //  console.error(e);
-    // if (e.response && e.response.status === 400) {
-    //     //setMensaje('Error: Los datos proporcionados son inválidos');
-    //     alert('Error: Los datos proporcionados son inválidos');
-    // }
-    // else {
-    //     alert(e.response);
-    //     alert(e.response.status);
-    //     // setMensaje('Error al conectarse con el servidor');
-    // }
+     console.error(e);
+    if (e.response && e.response.status === 400) {
+        alert('Error: Los datos proporcionados son inválidos');
+    }
+    else {
+        console.error(e.response)
+    }
     return null;
   }
 }
@@ -77,7 +74,7 @@ export async function newTipoServicio(tipoServicio) {
 export async function eliminarTipoServicio(id) {
   const urlBase = API_URL + "/tipoServicioEliminar";
   const { data } = await axios({
-    method: "PUT",
+    method: "DELETE",
     url: `${urlBase}/${id}`,
   });
   return true;

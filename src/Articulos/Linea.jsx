@@ -1,54 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { newLinea, obtenerLinea } from "../Services/LineaService";
+import { LineaContext } from "./LineaContext";
 
-export default function Linea({ title }) {
-  let navegacion = useNavigate();
 
+export default function Linea ({ title }) {
+  const { linea, cargarModel, onInputChange, onSubmit } = useContext(LineaContext);
   const { id } = useParams();
-
-  const [linea, setLinea] = useState({
-    denominacion: "",
-  });
-
-  const { denominacion } = linea;
+  const navegacion = useNavigate();
 
   useEffect(() => {
-    cargarModel();
-  }, []);
-
-  const cargarModel = async () => {
-    if (id > 0) {
-      console.log(id);
-      const resultado = await obtenerLinea(id);
-      console.log(resultado);
-      setLinea(resultado);
+    if (id) {
+      cargarModel(id);
     }
-  };
+  }, [id, cargarModel]);
 
-  const onInputChange = ({ target: { name, value } }) => {
-    //spread operator ... (expandir los atributos)
-    setLinea({ ...linea, [name]: value });
-  };
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    newLinea(linea);
-    // Redirigimos a la pagina de inicio
-    navegacion("/lineaList");
+    const success = await onSubmit(linea);
+    if (success) {
+      navegacion("/lineaList");
+    }
   };
 
   return (
     <div className="container">
       <div>
         <h1> Gestión de Linea / {title} </h1>
-        <hr></hr>
+        <hr />
       </div>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="denominacion" className="form-label">
-            {" "}
             Denominacion
           </label>
           <input
@@ -57,8 +40,8 @@ export default function Linea({ title }) {
             id="denominacion"
             name="denominacion"
             required={true}
-            value={denominacion}
-            onChange={(e) => onInputChange(e)}
+            value={linea.denominacion || ""}
+            onChange={onInputChange}
           />
         </div>
 

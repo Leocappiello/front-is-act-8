@@ -61,16 +61,13 @@ export async function newCliente(cliente) {
 
     return data;
   } catch (e) {
-    //  console.error(e);
-    // if (e.response && e.response.status === 400) {
-    //     //setMensaje('Error: Los datos proporcionados son inválidos');
-    //     alert('Error: Los datos proporcionados son inválidos');
-    // }
-    // else {
-    //     alert(e.response);
-    //     alert(e.response.status);
-    //     // setMensaje('Error al conectarse con el servidor');
-    // }
+    console.error(e);
+    if (e.response && e.response.status === 400) {
+        alert('Error: Los datos proporcionados son inválidos');
+    }
+    else {
+      console.error(e.response)
+    }
     return null;
   }
 }
@@ -78,7 +75,7 @@ export async function newCliente(cliente) {
 export async function eliminarCliente(id) {
   const urlBase = API_URL + "/clienteEliminar";
   const { data } = await axios({
-    method: "PUT",
+    method: "DELETE",
     url: `${urlBase}/${id}`,
   });
   return true;

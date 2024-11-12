@@ -1,76 +1,46 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  newArticuloVenta,
-  obtenerArticuloVenta,
-} from "../Services/ArticuloVentaService";
-import { obtenerLineas2 } from "../Services/LineaService";
+import { ArticuloVentaContext } from "./ArticuloVentaContext";
 
-export default function ArticuloVenta({ title }) {
-  let navegacion = useNavigate();
+const ArticuloVenta = ({title}) => {
+  const {
+    articulo,
+    setArticulo,
+    listaLineas,
+    selectedLinea,
+    setSelectedLinea,
+    cargarModel,
+    onInputChange,
+    onSubmit
+  } = useContext(ArticuloVentaContext);
 
   const { id } = useParams();
-
-  const [articulo, setArticulo] = useState({
-    denominacion: "",
-    linea: 0,
-  });
-
-  const [listaLineas, setListaLineas] = useState([]);
-  const [selectedLinea, setSelectedLinea] = useState({});
-  const { denominacion, linea } = articulo;
+  const navegacion = useNavigate();
 
   useEffect(() => {
-    cargarModel();
-    cargarLineas();
-  }, []);
-
-  const cargarModel = async () => {
-    if (id > 0) {
-      console.log(id);
-      const resultado = await obtenerArticuloVenta(id);
-      setArticulo(resultado);
-      setSelectedLinea(resultado.linea);
+    if (id) {
+      cargarModel(id); // Load the article if we have an ID
     }
-  };
+  }, [id, cargarModel]);
 
-  const cargarLineas = async () => {
-    console.log(id);
-
-    const resultado = await obtenerLineas2();
-    setListaLineas(resultado);
-  };
-
-  const onInputChange = ({ target: { name, value } }) => {
-    //spread operator ... (expandir los atributos)
-    setArticulo({ ...articulo, [name]: value });
-  };
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = {
-      ...articulo,
-      linea: selectedLinea, // Asumiendo que la línea seleccionada es el id de la línea
-    };
-    window.alert("id lina" + selectedLinea);
-    newArticuloVenta(data);
-    // Redirigimos a la pagina de inicio
-    navegacion("/articuloList");
+    const success = await onSubmit(articulo);
+    if (success) {
+      navegacion("/articuloList");
+    }
   };
 
   return (
     <div className="container">
       <div>
         <h1> Gestión de articulo / {title} </h1>
-        <hr></hr>
+        <hr />
       </div>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="denominacion" className="form-label">
-            {" "}
             Denominacion
           </label>
           <input
@@ -79,8 +49,8 @@ export default function ArticuloVenta({ title }) {
             id="denominacion"
             name="denominacion"
             required={true}
-            value={denominacion}
-            onChange={(e) => onInputChange(e)}
+            value={articulo.denominacion}
+            onChange={onInputChange}
           />
 
           <label htmlFor="listaLineas">Selecciona una linea:</label>
@@ -115,3 +85,5 @@ export default function ArticuloVenta({ title }) {
     </div>
   );
 }
+
+export default ArticuloVenta;

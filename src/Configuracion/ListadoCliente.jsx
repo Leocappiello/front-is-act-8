@@ -1,12 +1,11 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ITEMS_PER_PAGE, API_URL } from "../App.config";
+import { Link } from "react-router-dom";
+import { ITEMS_PER_PAGE } from "../App.config";
+import { eliminarCliente, obtenerClientes } from "../Services/ClienteService";
 import { ClienteContext } from "./ClienteContext";
-import { obtenerClientes, eliminarCliente } from "../Services/ClienteService";
 
 export default function ListadoCliente() {
-  const { clientes, setClientes } = useContext(ClienteContext);
+  const { cliente, setCliente } = useContext(ClienteContext);
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE);
@@ -28,7 +27,7 @@ export default function ListadoCliente() {
     console.log("carga " + page);
     obtenerClientes(consulta, page, pageSize)
       .then((response) => {
-        setClientes(response.content);
+        setCliente(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -36,7 +35,7 @@ export default function ListadoCliente() {
       });
   };
 
-  const handConsultaChange = (e) => {
+  const handleChangeConsulta = (e) => {
     setConsulta(e.target.value);
   };
 
@@ -64,7 +63,7 @@ export default function ListadoCliente() {
   };
 
   const sortedData = () => {
-    const sorted = [...clientes];
+    const sorted = Array.isArray(cliente) ? [...cliente] : [];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -78,6 +77,7 @@ export default function ListadoCliente() {
     }
     return sorted;
   };
+
   ///////////////////////////////////////Hasta aca para el orden de las tablas///////////////////////////////////////////////////
 
   return (
@@ -96,7 +96,7 @@ export default function ListadoCliente() {
             type="search"
             aria-label="Search"
             value={consulta}
-            onChange={handConsultaChange}
+            onChange={handleChangeConsulta}
           ></input>
         </div>
         <div className="col-1">

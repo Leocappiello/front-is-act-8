@@ -9,7 +9,7 @@ import {
 import { ArticuloVentaContext } from "./ArticuloVentaContext";
 
 export default function ListadoArticulosVenta() {
-  const { articulos, setArticulos } = useContext(ArticuloVentaContext);
+  const { articulo, setArticulo } = useContext(ArticuloVentaContext);
 
   const [consulta, setConsulta] = useState("");
 
@@ -34,7 +34,7 @@ export default function ListadoArticulosVenta() {
     console.log("carga " + page);
     obtenerArticulosVenta(consulta, page, pageSize)
       .then((response) => {
-        setArticulos(response.content);
+        setArticulo(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -42,7 +42,7 @@ export default function ListadoArticulosVenta() {
       });
   };
 
-  const handConsultaChange = (e) => {
+  const handleChangeConsulta = (e) => {
     setConsulta(e.target.value);
   };
 
@@ -70,7 +70,7 @@ export default function ListadoArticulosVenta() {
   };
 
   const sortedData = () => {
-    const sorted = [...articulos];
+    const sorted = Array.isArray(articulo) ? [...articulo] : [];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -103,7 +103,7 @@ export default function ListadoArticulosVenta() {
             type="search"
             aria-label="Search"
             value={consulta}
-            onChange={handConsultaChange}
+            onChange={handleChangeConsulta}
           ></input>
         </div>
         <div className="col-1">

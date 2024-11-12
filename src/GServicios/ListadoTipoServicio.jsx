@@ -41,7 +41,7 @@ export default function ListadoTipoServicio() {
       });
   };
 
-  const handConsultaChange = (e) => {
+  const handleChangeConsulta = (e) => {
     setConsulta(e.target.value);
   };
 
@@ -101,7 +101,7 @@ export default function ListadoTipoServicio() {
             type="search"
             aria-label="Search"
             value={consulta}
-            onChange={handConsultaChange}
+            onChange={handleChangeConsulta}
           ></input>
         </div>
         <div className="col-1">

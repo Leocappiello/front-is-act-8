@@ -1,64 +1,36 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { obtenerCliente } from "../Services/ClienteService";
+import { ClienteContext } from "./ClienteContext";
 
 export default function Cliente({ title }) {
-  const urlBase = "http://localhost:8080/nails/clientes";
-  let navegacion = useNavigate();
-
+  const { cliente, cargarCliente, onInputChange, onSubmit } = useContext(ClienteContext);
   const { id } = useParams();
-
-  const [cliente, setCliente] = useState({
-    razonSocial: "",
-    celular: "",
-    mail: "",
-  });
-
-  const { razonSocial, celular, mail } = cliente;
+  const navegacion = useNavigate();
 
   useEffect(() => {
-    cargarCliente();
-  }, []);
-
-  const cargarCliente = async () => {
-    console.log(id);
-    if (id > 0) {
-      console.log(id);
-      const resultado = await obtenerCliente(id);
-      console.log(resultado);
-      setCliente(resultado);
+    if (id) {
+      cargarCliente(id);
     }
-  };
+  }, [id, cargarCliente]);
 
-  const onInputChange = ({ target: { name, value } }) => {
-    //spread operator ... (expandir los atributos)
-    setCliente({ ...cliente, [name]: value });
-  };
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const urlBase = "http://localhost:8080/nails/clientes";
-    if (id > 0) {
-      await axios.put(`${urlBase}/${id}`, cliente);
-    } else {
-      await axios.post(urlBase, cliente);
+    const success = await onSubmit(id);
+    if (success) {
+      navegacion("/clienteList");
     }
-    // Redirigimos a la pagina de inicio
-    navegacion("/clienteList");
   };
 
   return (
     <div className="container">
       <div>
         <h1> Gestión de Clientes / {title} </h1>
-        <hr></hr>
+        <hr />
       </div>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="razonSocial" className="form-label">
-            {" "}
             Apellido Nombre
           </label>
           <input
@@ -66,40 +38,38 @@ export default function Cliente({ title }) {
             className="form-control"
             id="razonSocial"
             name="razonSocial"
-            required={true}
-            value={razonSocial}
-            onChange={(e) => onInputChange(e)}
+            required
+            value={cliente.razonSocial || ""}
+            onChange={onInputChange}
           />
         </div>
 
         <div className="mb-3">
           <label htmlFor="celular" className="form-label">
-            {" "}
-            celular
+            Celular
           </label>
           <input
             type="number"
             className="form-control"
             id="celular"
             name="celular"
-            required={true}
-            value={celular}
-            onChange={(e) => onInputChange(e)}
+            required
+            value={cliente.celular}
+            onChange={onInputChange}
           />
         </div>
 
         <div className="mb-3">
           <label htmlFor="mail" className="form-label">
-            {" "}
-            mail
+            Mail
           </label>
           <input
             type="email"
             className="form-control"
             id="mail"
             name="mail"
-            value={mail}
-            onChange={(e) => onInputChange(e)}
+            value={cliente.mail}
+            onChange={onInputChange}
           />
         </div>
 

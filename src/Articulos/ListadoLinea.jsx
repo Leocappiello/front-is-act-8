@@ -6,7 +6,7 @@ import { LineaContext } from "./LineaContext";
 import { obtenerLineas, eliminarLineas } from "../Services/LineaService";
 
 export default function ListadoLinea() {
-  const { lineas, setLineas } = useContext(LineaContext);
+  const { linea, setLinea } = useContext(LineaContext);
 
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
@@ -29,7 +29,7 @@ export default function ListadoLinea() {
     console.log("carga " + page);
     obtenerLineas(consulta, page, pageSize)
       .then((response) => {
-        setLineas(response.content);
+        setLinea(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -37,7 +37,7 @@ export default function ListadoLinea() {
       });
   };
 
-  const handConsultaChange = (e) => {
+  const handleChangeConsulta = (e) => {
     setConsulta(e.target.value);
   };
 
@@ -64,7 +64,7 @@ export default function ListadoLinea() {
   };
 
   const sortedData = () => {
-    const sorted = [...lineas];
+    const sorted = Array.isArray(linea) ? [...linea] : [];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -97,7 +97,7 @@ export default function ListadoLinea() {
             type="search"
             aria-label="Search"
             value={consulta}
-            onChange={handConsultaChange}
+            onChange={handleChangeConsulta}
           ></input>
         </div>
         <div className="col-1">
